@@ -187,9 +187,11 @@ int main(int argv, const char *argc[]) {
 	while (consumed < buffer_size)
 		sleep(1); // wait for consumers to finish consuming
 
+	empty->signal(); // signal that there are no items available
+
 	// Now signal all consumers to exit and make sure they exited
 	for (int i=0; i<num_consumers; i++) { // loop through the number of consumers
-		empty->signal(); // signal that there are no items available
+	//	empty->signal(); // signal that there are no items available
 		pthread_join(consumers[i], NULL); // wait for each consumer to finish
 	}
 
