@@ -62,11 +62,12 @@ void *producer_routine(void *data) { // data is a void pointer that should point
 
 		buffer[next_item_produced] = serialnum; // make this circular buffer; add item in
 		next_item_produced = (next_item_produced + 1) % buffer.size(); // move to next slot
-		serialnum++; // increment serial number
 		left_to_produce--; // decrement the number left to produce
 
 		pthread_mutex_unlock(&mutex); // unlock the mutex
 		printf("   Yoda #%d put on shelf.\n", serialnum); // message for item placed on shelf
+
+		serialnum++; // increment serial number
 		
 		// Semaphore signal that there are items available
 		empty->signal();
@@ -157,7 +158,8 @@ int main(int argv, const char *argc[]) {
 	}
 
 	// print messages
-	printf("Producing %d today.\n", buffer_size); // message for buffer size
+	printf("Producing %d today.\n", max_items); // message for max items
+	printf("Holding %d items on the shelf.\n", buffer_size); // message for buffer size
 	printf("There are %d consumers shopping today.\n", num_consumers); // message for number of consumers
 	printf("The store will close after %d items are sold.\n", max_items); // message for max items to produce
 	
