@@ -90,29 +90,47 @@ If there are more producers in this scenario, then we would need to ensure that 
 For the `producer_routine`, we would need to adjust the code so that there is a new mutex lock to acquire a unique serial number for the producers. There would also be a shared counter `need_to_produce` for the producers to coordinate production, so that they cumulatively reach the max_items. Similar to the `consumer_routine`, the producers would loop through its own `left_to_produce` count to decrease the `need_to_produce` counter to distribute productions amongst all of the producers. The following pseudocode is similar to the `consumer_rountine` code:
 
 `max_items = need_to_produce`
+
 `initialize producer_mutex`
-`while (true) {`
+
+`while (true)`
+
     `lock producer_mutex // to prevent race conditions`
+    
     `if need_to_produce = 0 // if there is no more`
+
         `unlock the producer_mutex`
+        
         `break`
+        
     `// if there is more, continue decrementing the count`
+    
     `need_to_produce = need_to_produce - 1`
+    
     `unlock producer_mutex`
+    
     `...`
-`}`
 
 For the `main` function, we need to adjust it so that the producer threads are created and launched the same way the consumer ones are, by being looped through. We also need to adjust the prompt input to match to `./babyyoda <buffer_size> <num_producers> <num_consumers> <max_items>`.
 
 `int num_producers = (unsigned int) strtol(argc[2], NULL, 10);`
+
 `int num_consumers = (unsigned int) strtol(argc[3], NULL, 10);`
+
 `max_items = (unsigned int) strtol(argc[4], NULL, 10);`
+
 `...`
+
 `for (int i=0; i<num_producers; i++)`
+
     `pthread_create(&producer_threads[i], NULL, producer_routine,...`
+    
 `...`
+
 `for (int i=0; i<num_producers; i++)`
+
     `empty->signal();`
+    
     `pthread_join(producer_threads[i], NULL);`
 
 The rest of the code is adjusted to support the multiple producer threads; anything consumer thread related stays the same.
