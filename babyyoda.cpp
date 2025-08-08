@@ -102,7 +102,7 @@ void *consumer_routine(void *data) {
 		// Take an item off the shelf
 		pthread_mutex_lock(&mutex);
 
-		if (consumed >= max_items) { // check if we have consumed enough items
+		if (consumed == max_items) { // check if we have consumed enough items
 			pthread_mutex_unlock(&mutex); // unlock the mutex before exiting
 			empty->signal(); // signal that there are no items available
 			printf("Consumer #%ld found no Yoda to buy, going home.\n", thread_id);
